@@ -121,13 +121,12 @@ $app_name = idx($app_info, 'name', '');
     <!-- over facebook.  You should fill these tags in with      -->
     <!-- your data.  To learn more about Open Graph, visit       -->
     <!-- 'https://developers.facebook.com/docs/opengraph/'       -->
-    <meta property="og:title" content="<?php echo he($app_name); ?>" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="<?php echo AppInfo::getUrl(); ?>" />
-    <meta property="og:image" content="<?php echo AppInfo::getUrl('/logo.png'); ?>" />
-    <meta property="og:site_name" content="<?php echo he($app_name); ?>" />
-    <meta property="og:description" content="My first app" />
     <meta property="fb:app_id" content="<?php echo AppInfo::appID(); ?>" />
+    <meta property="og:type"        content="heruko_test:app" />
+    <meta property="og:url"         content="<?php echo AppInfo::getUrl(); ?>" />
+    <meta property="og:title"       content="<?php echo he($app_name); ?>" />
+    <meta property="og:description" content="My first test app" />
+    <meta property="og:image"       content="https://s-static.ak.fbcdn.net/images/devsite/attachment_blank.png" />
 
     <script type="text/javascript">
       function handleDialogResponse(response) {
@@ -137,6 +136,14 @@ $app_name = idx($app_info, 'name', '');
           alert('Canceled or failed.');
         }
         return true;
+      }
+
+      function handlePublishResponse(response) {
+        if (!response || response.error) {
+          alert('Error occured');
+        } else {
+          alert('Post was successful! Action ID: ' + response.id);
+        }
       }
 
       function showDialog(method, app_id, link) {
@@ -166,6 +173,10 @@ $app_name = idx($app_info, 'name', '');
           },
           handleDialogResponse
         );
+      }
+
+      function publishAction() {
+        FB.api('/me/heruko_test:create?app=<?php echo urlencode(AppInfo::getUrl()); ?>', 'post', handlePublishResponse);
       }
     </script>
 
@@ -239,13 +250,18 @@ $app_name = idx($app_info, 'name', '');
                 <span class="apprequests">Send Requests</span>
               </a>
             </li>
+            <li>
+              <a href="#" class="facebook-button apprequests" onclick="publishAction();">
+                <span class="apprequests">Publish Action</span>
+              </a>
+            </li>
           </ul>
         </div>
       </div>
       <?php } else { ?>
       <div>
         <h1>Welcome</h1>
-        <div class="fb-login-button" data-scope="user_likes,user_photos"></div>
+        <div class="fb-login-button" data-scope="publish_actions,user_likes,user_photos"></div>
       </div>
       <?php } ?>
     </header>
